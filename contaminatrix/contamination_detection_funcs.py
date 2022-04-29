@@ -188,12 +188,19 @@ def generate_rg_overlaps(bedfile):
 def find_sus_positions(args):
     overlap_tuples = generate_rg_overlaps(args.bedfile)
     suspicious_positions = {}
+
     with pysam.AlignmentFile(
         args.bamfile, "rb", reference_filename=args.reference
     ) as bam:
+        if len(bam.references) > 1:
+            print("BAM file appears to be aligned to more than one reference")
+            sys.exit(2)
+
+        ref_name = bam.references[0]
+
         for overlap_start, overlap_end in overlap_tuples:
             for pileupcolumn in bam.pileup(
-                "MN908947.3", start=overlap_start, end=overlap_end
+                ref_name, start=overlap_start, end=overlap_end
             ):
                 if pileupcolumn.reference_pos + 1 not in range(
                     overlap_start, overlap_end
