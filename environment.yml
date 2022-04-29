@@ -1,0 +1,11 @@
+name: contaminatrix
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pandas
+  - numpy
+  - requests
+  - pysam
+  - click
