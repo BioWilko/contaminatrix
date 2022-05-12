@@ -231,6 +231,11 @@ def find_sus_positions(args):
                         "freqs": {"A": 0.0, "C": 0.0, "G": 0.0, "T": 0.0},
                     },
                 }
+                if (
+                    freqs[1]["total"] < args.min_coverage
+                    or freqs[2]["total"] < args.min_coverage
+                ):
+                    continue
                 if all(count == 0 for count in counts[1].values()) or all(
                     (count == 0 for count in counts[2].values())
                 ):
@@ -240,11 +245,6 @@ def find_sus_positions(args):
                         freqs[read_group]["freqs"][base] = (
                             counts[read_group][base] / freqs[read_group]["total"]
                         )
-                    if (
-                        not sum(freqs[read_group]["freqs"].values())
-                        >= args.min_coverage
-                    ):
-                        break
                 if any(
                     abs(freq_1 - freq_2) >= args.min_difference
                     for freq_1, freq_2 in zip(
