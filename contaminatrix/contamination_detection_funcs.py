@@ -206,8 +206,6 @@ def find_sus_positions(args):
                     overlap_start, overlap_end
                 ):
                     continue
-                if not pileupcolumn.n >= args.min_coverage:
-                    continue
                 counts = {
                     1: {"A": 0, "C": 0, "G": 0, "T": 0},
                     2: {"A": 0, "C": 0, "G": 0, "T": 0},
@@ -242,6 +240,11 @@ def find_sus_positions(args):
                         freqs[read_group]["freqs"][base] = (
                             counts[read_group][base] / freqs[read_group]["total"]
                         )
+                    if (
+                        not sum(freqs[read_group]["freqs"].values())
+                        >= args.min_coverage
+                    ):
+                        break
                 if any(
                     abs(freq_1 - freq_2) >= args.min_difference
                     for freq_1, freq_2 in zip(
